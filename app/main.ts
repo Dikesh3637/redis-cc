@@ -8,6 +8,7 @@ const server: net.Server = net.createServer((connection: net.Socket) => {
 		const parser = new RESP(data.toString());
 		const command_sequence = parser.decode();
 		let command = command_sequence[0] as string;
+		console.log(command);
 		if (command === null) {
 			connection.write("$-1\r\n");
 		} else {
