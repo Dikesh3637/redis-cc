@@ -8,24 +8,30 @@ const server: net.Server = net.createServer((connection: net.Socket) => {
 		const parser = new RESP(data.toString());
 		const command_sequence = parser.decode();
 		let command = command_sequence[0] as string;
-		if (command.toLowerCase() === "ping") {
-			connection.write("+PONG\r\n");
-		}
-		if (command.toLowerCase() === "echo") {
-			const message = command_sequence[1] as string;
-			connection.write(`$${message.length}\r\n${message}\r\n`);
-		}
-		if (command.toLowerCase() === "set") {
-			const key = command_sequence[1] as string;
-			const value = command_sequence[2] as string;
-			map.set(key, value);
-			connection.write("+OK\r\n");
-		}
-		if (command.toLowerCase() === "get") {
-			const key = command_sequence[1] as string;
-			const value = map.get(key);
-			if (value !== undefined) {
-				connection.write(`$${value.length}\r\n${value}\r\n`);
+		if (command === null) {
+			connection.write("$-1\r\n");
+		} else {
+			if (command.toLowerCase() === "ping") {
+				connection.write("+PONG\r\n");
+			}
+			if (command.toLowerCase() === "echo") {
+				const message = command_sequence[1] as string;
+				connection.write(`$${message.length}\r\n${message}\r\n`);
+			}
+			if (command.toLowerCase() === "set") {
+				const key = command_sequence[1] as string;
+				const value = command_sequence[2] as string;
+				map.set(key, value);
+				connection.write("+OK\r\n");
+			}
+			if (command.toLowerCase() === "get") {
+				const key = command_sequence[1] as string;
+				const value = map.get(key);
+				if (value !== undefined) {
+					connection.write(`$${value.length}\r\n${value}\r\n`);
+				} else {
+					connection.write("$-1\r\n");
+				}
 			}
 		}
 	});
