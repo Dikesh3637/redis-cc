@@ -1,29 +1,43 @@
 import { describe, expect, it } from "bun:test";
-import { decodeRESP } from "../parser";
+import { RESP } from "../parser";
 
-describe("decodeRESP", () => {
-	it("should decode simple string", () => {
-		const result = decodeRESP("+OK\r\n");
-		expect(result).toEqual(["OK"]);
+describe("decode", () => {
+	it("decodes a simple string", () => {
+		expect(new RESP("+OK\r\n").decode()).toEqual(["OK"]);
 	});
 
-	it("should decode number", () => {
-		const result = decodeRESP(":123\r\n");
-		expect(result).toEqual([123]);
+	it("decodes a number", () => {
+		expect(new RESP(":123\r\n").decode()).toEqual([123]);
 	});
 
-	it("should decode bulk string", () => {
-		const result = decodeRESP("$6\r\nfoobar\r\n");
-		expect(result).toEqual(["foobar"]);
+	it("decodes a bulk string", () => {
+		expect(new RESP("$6\r\nfoobar\r\n").decode()).toEqual(["foobar"]);
 	});
 
-	it("should decode multiple commands", () => {
-		const result = decodeRESP("+PONG\r\n:456\r\n$5\r\nhello\r\n");
-		expect(result).toEqual(["PONG", 456, "hello"]);
+	it("decodes multiple commands", () => {
+		expect(new RESP("+PONG\r\n:456\r\n$5\r\nhello\r\n").decode()).toEqual([
+			"PONG",
+			456,
+			"hello",
+		]);
 	});
 
-	it("should decode array", () => {
-		const result = decodeRESP("*2\r\n$4\r\nECHO\r\n$4\r\npear\r\n");
-		expect(result).toEqual(["ECHO", "pear"]);
+	it("decodes an array", () => {
+		expect(new RESP("*2\r\n$4\r\nECHO\r\n$4\r\npear\r\n").decode()).toEqual([
+			["ECHO", "pear"],
+		]);
+	});
+
+	it("decodes arrays within arrays", () => {
+		expect(
+			new RESP(
+				"*2\r\n*3\r\n:1\r\n:2\r\n:3\r\n*2\r\n:4\r\n$6\r\nfoobar\r\n"
+			).decode()
+		).toEqual([
+			[
+				[1, 2, 3],
+				[4, "foobar"],
+			],
+		]);
 	});
 });
