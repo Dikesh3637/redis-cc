@@ -9,6 +9,7 @@ const server: net.Server = net.createServer((connection: net.Socket) => {
 		const parser = new RESP(data.toString());
 		const command_sequence = parser.parsedResult;
 		console.log("command_sequence", command_sequence);
+		console.log(100);
 		let command = command_sequence[0] as string;
 		if (command.toLowerCase() === "ping") {
 			connection.write("+PONG\r\n");
