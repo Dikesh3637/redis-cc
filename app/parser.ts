@@ -20,7 +20,8 @@ export class RESP {
 	private readonly commandArray: string[];
 
 	constructor(input: string) {
-		this.commandIdx = 0;
+		//Start decoding at the second command to avoid returning an array as the first element
+		this.commandIdx = 1;
 		// Filter out empty strings that might come from trailing \r\n
 		this.commandArray = input.split("\r\n").filter((line) => line.length > 0);
 	}
@@ -160,7 +161,6 @@ export class RESP {
 
 			this.commandIdx++;
 		}
-
 		return result;
 	}
 }
