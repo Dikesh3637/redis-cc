@@ -31,6 +31,7 @@ const server: net.Server = net.createServer((connection: net.Socket) => {
 		if (command.toLowerCase() === "get") {
 			const key = command_sequence[1] as string;
 			const value = map.get(key);
+			console.log("value", value);
 			if (value === undefined) {
 				connection.write("$-1\r\n");
 			} else {
