@@ -169,7 +169,7 @@ export class RESP {
 	public getExpiryFlag(): number | null {
 		let i = 0;
 		for (i; i < this.parsedResult.length; i++) {
-			console.log(this.parsedResult[i]);
+			console.log(this.parsedResult[i], typeof this.parsedResult[i]);
 			if (this.parsedResult[i] === "PX") {
 				return parseInt(this.commandArray[i + 1]);
 			}
