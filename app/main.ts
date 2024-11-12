@@ -21,6 +21,7 @@ const server: net.Server = net.createServer((connection: net.Socket) => {
 			const key = command_sequence[1] as string;
 			const value = command_sequence[2] as string;
 			const expiryValue = parser.getExpiryFlag();
+			console.log("expiryValue", expiryValue);
 			if (expiryValue) {
 				map.set(key, [value, Date.now(), expiryValue]);
 			} else {
@@ -31,13 +32,11 @@ const server: net.Server = net.createServer((connection: net.Socket) => {
 		if (command.toLowerCase() === "get") {
 			const key = command_sequence[1] as string;
 			const value = map.get(key);
-			console.log("value", value);
 			if (!value) {
 				connection.write("$-1\r\n");
 			} else {
 				let [keyValue, timestamp, expiry] = value;
 				if (expiry && Date.now() - timestamp > expiry) {
-					console.log("timestamp", Date.now() - timestamp, expiry);
 					connection.write("$-1\r\n");
 					map.delete(key);
 				} else {
