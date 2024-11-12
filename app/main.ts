@@ -36,7 +36,7 @@ const server: net.Server = net.createServer((connection: net.Socket) => {
 				connection.write("$-1\r\n");
 			} else {
 				let [keyValue, timestamp, expiry] = value;
-				if (expiry && Date.now() - timestamp >= expiry) {
+				if (expiry && Date.now() - timestamp > expiry) {
 					connection.write("$-1\r\n");
 					map.delete(key);
 				} else {
