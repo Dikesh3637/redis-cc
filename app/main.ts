@@ -32,9 +32,10 @@ const server: net.Server = net.createServer((connection: net.Socket) => {
 			const key = command_sequence[1] as string;
 			const value = map.get(key);
 			console.log("value", value);
-			if (value === undefined) {
+			if (!value) {
 				connection.write("$-1\r\n");
 			} else {
+				console.log("reached else");
 				let [keyValue, timestamp, expiry] = value;
 				if (expiry) {
 					if (Date.now() - timestamp >= expiry) {
