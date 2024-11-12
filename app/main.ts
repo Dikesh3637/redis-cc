@@ -1,8 +1,9 @@
 import * as net from "net";
 import { RESP } from "./parser";
 
-let map: Map<string, string> = new Map<string, string>();
-// You can use print statements as follows for debugging, they'll be visible when running tests.
+//key to [value,expiry,timestamp] map
+let map = new Map<string, [string, number, number | null]>();
+
 const server: net.Server = net.createServer((connection: net.Socket) => {
 	connection.on("data", (data) => {
 		const parser = new RESP(data.toString());
@@ -18,15 +19,26 @@ const server: net.Server = net.createServer((connection: net.Socket) => {
 		if (command.toLowerCase() === "set") {
 			const key = command_sequence[1] as string;
 			const value = command_sequence[2] as string;
-			map.set(key, value);
+			const expiryValue = parser.getExpiryFlag();
+			if (expiryValue) {
+				map.set(key, [value, Date.now(), expiryValue]);
+			} else {
+				map.set(key, [value, Date.now(), null]);
+			}
 			connection.write("+OK\r\n");
 		}
 		if (command.toLowerCase() === "get") {
 			const key = command_sequence[1] as string;
 			const value = map.get(key);
 			if (value === undefined) {
-				connection.write("+KEY_NOT_FOUND\r\n");
+				connection.write("$-1\r\n");
 			} else {
+				let [keyValue, timestamp, expiry] = value;
+				if (expiry) {
+					Date.now() - timestamp > expiry
+						? connection.write("$-1\r\n")
+						: connection.write(`$${keyValue.length}\r\n${keyValue}\r\n`);
+				}
 				connection.write(`$${value.length}\r\n${value}\r\n`);
 			}
 		}

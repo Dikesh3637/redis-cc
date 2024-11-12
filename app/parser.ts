@@ -18,12 +18,15 @@ class RESPError extends Error {
 export class RESP {
 	private commandIdx: number = 0;
 	private readonly commandArray: string[];
+	public parsedResult: RESPValue[] = [];
 
 	constructor(input: string) {
 		//Start decoding at the second command to avoid returning an array as the first element
 		this.commandIdx = 1;
 		// Filter out empty strings that might come from trailing \r\n
 		this.commandArray = input.split("\r\n").filter((line) => line.length > 0);
+		//store the parsed result
+		this.parsedResult = this.decode();
 	}
 
 	private getCurrentCommand(): string {
@@ -162,5 +165,14 @@ export class RESP {
 			this.commandIdx++;
 		}
 		return result;
+	}
+	public getExpiryFlag(): number | null {
+		let i = 0;
+		for (i; i < this.parsedResult.length; i++) {
+			if (this.parsedResult[i] === "PX") {
+				return parseInt(this.commandArray[i + 1]);
+			}
+		}
+		return null;
 	}
 }
