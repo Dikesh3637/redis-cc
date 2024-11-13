@@ -60,6 +60,10 @@ const server: net.Server = net.createServer((connection: net.Socket) => {
 				connection.write(`:1\r\n`);
 			}
 		}
+
+		if (command.toLowerCase() === "multi") {
+			connection.write("+OK\r\n");
+		}
 	});
 });
 
