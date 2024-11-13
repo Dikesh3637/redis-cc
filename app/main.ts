@@ -49,8 +49,12 @@ const server: net.Server = net.createServer((connection: net.Socket) => {
 			const value = map.get(key);
 			if (value) {
 				const [keyValue, timestamp, expiry] = value;
-				map.set(key, [String(parseInt(keyValue) + 1), timestamp, expiry]);
-				connection.write(`:${parseInt(keyValue) + 1}\r\n`);
+				if (!Number(keyValue)) {
+					connection.write(`-ERR value is not an integer or out of range\r\n`);
+				} else {
+					map.set(key, [String(parseInt(keyValue) + 1), timestamp, expiry]);
+					connection.write(`:${parseInt(keyValue) + 1}\r\n`);
+				}
 			} else {
 				map.set(key, ["1", Date.now(), null]);
 				connection.write(`:1\r\n`);
