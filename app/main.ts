@@ -73,7 +73,7 @@ const server: net.Server = net.createServer((connection: net.Socket) => {
 				return;
 			}
 			//execution
-			connection.write(`*${command_sequence.length}\r\n`);
+			connection.write(`*0\r\n`);
 			mulitFlag = false;
 		}
 	});
