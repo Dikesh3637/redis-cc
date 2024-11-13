@@ -44,6 +44,17 @@ const server: net.Server = net.createServer((connection: net.Socket) => {
 				}
 			}
 		}
+		if (command.toLowerCase() === "incr") {
+			const key = command_sequence[1] as string;
+			const value = map.get(key);
+			if (value) {
+				const [keyValue, timestamp, expiry] = value;
+				map.set(key, [String(parseInt(keyValue) + 1), timestamp, expiry]);
+				connection.write(`:${parseInt(keyValue) + 1}\r\n`);
+			} else {
+				connection.write(`$-1\r\n`);
+			}
+		}
 	});
 });
 
