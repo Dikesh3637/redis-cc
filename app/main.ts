@@ -1,6 +1,7 @@
 import * as net from "net";
 import { RESP } from "./parser";
 
+let mulitFlag: boolean = false;
 //key to [value,expiry,timestamp] map
 let map = new Map<string, [string, number, number | null]>();
 
@@ -63,6 +64,17 @@ const server: net.Server = net.createServer((connection: net.Socket) => {
 
 		if (command.toLowerCase() === "multi") {
 			connection.write("+OK\r\n");
+			mulitFlag = true;
+		}
+
+		if (command.toLowerCase() === "exec") {
+			if (!mulitFlag) {
+				connection.write("-ERR EXEC without MULTI\r\n");
+				return;
+			}
+			//execution
+			connection.write(`*${command_sequence.length}\r\n`);
+			mulitFlag = false;
 		}
 	});
 });
