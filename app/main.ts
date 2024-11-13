@@ -52,7 +52,8 @@ const server: net.Server = net.createServer((connection: net.Socket) => {
 				map.set(key, [String(parseInt(keyValue) + 1), timestamp, expiry]);
 				connection.write(`:${parseInt(keyValue) + 1}\r\n`);
 			} else {
-				connection.write(`$-1\r\n`);
+				map.set(key, ["1", Date.now(), null]);
+				connection.write(`:1\r\n`);
 			}
 		}
 	});
