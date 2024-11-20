@@ -105,7 +105,10 @@ export class CommandProcessor {
 			!this.multiTransaction.getExecFlag() &&
 			socketToTransaction.has(this.connection)
 		) {
-			if (command.toLowerCase() !== "exec") {
+			if (
+				command.toLowerCase() !== "exec" &&
+				command.toLowerCase() !== "discard"
+			) {
 				this.multiTransaction.addCommand(command_sequence);
 				return "+QUEUED\r\n";
 			}
@@ -143,6 +146,14 @@ export class CommandProcessor {
 					return "*0\r\n";
 				}
 				return this.handleExec();
+
+			case "discard":
+				if (!this.multiTransaction.getTransactionFlag()) {
+					return "-ERR DISCARD without MULTI\r\n";
+				}
+				this.multiTransaction.discardTransaction();
+				socketToTransaction.delete(this.connection);
+				return "+OK\r\n";
 
 			default:
 				return "-ERR unknown command\r\n";
