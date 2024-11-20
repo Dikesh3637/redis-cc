@@ -6,7 +6,7 @@ enum DataType {
 	Array = "*",
 }
 
-type RESPValue = string | number | null | RESPValue[];
+export type RESPValue = string | number | null | RESPValue[];
 
 class RESPError extends Error {
 	constructor(message: string) {
