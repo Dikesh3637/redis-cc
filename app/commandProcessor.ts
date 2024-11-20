@@ -9,11 +9,17 @@ let write_command: Set<string> = new Set(["set", "incr"]);
 let read_command: Set<string> = new Set(["get"]);
 
 export class CommandProcessor {
-	private multiTransaction: MultiTransaction = MultiTransaction.getInstance();
+	private multiTransaction: MultiTransaction;
 	private connection: net.Socket;
 
 	constructor(connection: net.Socket) {
 		this.connection = connection;
+		if (socketToTransaction.has(connection)) {
+			this.multiTransaction = socketToTransaction.get(connection)!;
+		} else {
+			this.multiTransaction = new MultiTransaction();
+			socketToTransaction.set(connection, this.multiTransaction);
+		}
 	}
 
 	private handleExec(): string {
@@ -132,7 +138,6 @@ export class CommandProcessor {
 				return this.handleIncr(command_sequence);
 
 			case "multi":
-				this.multiTransaction = MultiTransaction.getInstance();
 				this.multiTransaction.setTransactionFlag(true);
 				socketToTransaction.set(this.connection, this.multiTransaction);
 				return "+OK\r\n";

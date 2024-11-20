@@ -2,23 +2,11 @@ import type { RESPValue } from "./parser";
 import { Queue } from "./utils/queue";
 
 export class MultiTransaction {
-	private static instance: MultiTransaction | null = null;
 	private transactionFlag: boolean = false;
 	private execFlag: boolean = false;
 	private commandQueue: Queue<RESPValue[]> = new Queue<RESPValue[]>();
 
-	private constructor() {}
-
-	public static getInstance(): MultiTransaction {
-		if (!MultiTransaction.instance) {
-			MultiTransaction.instance = new MultiTransaction();
-		}
-		return MultiTransaction.instance;
-	}
-
-	public static resetInstance(): void {
-		MultiTransaction.instance = null;
-	}
+	constructor() {}
 
 	public printCommandQueue(): void {
 		this.commandQueue.print();
