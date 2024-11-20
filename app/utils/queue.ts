@@ -22,6 +22,16 @@ export class Queue<T> {
 		this.size++;
 	}
 
+	public getListForm(): T[] {
+		const list: T[] = [];
+		let current = this.head;
+		while (current) {
+			list.push(current.value);
+			current = current.next;
+		}
+		return list;
+	}
+
 	public print(): void {
 		let current = this.head;
 		while (current) {
