@@ -1,12 +1,11 @@
 import * as net from "net";
+import { rdbconfig } from "./main";
 import { MultiTransaction } from "./multiTransaction";
 import { RESP, type RESPValue } from "./parser";
 import { getExpiryFlag } from "./utils/commandFeatureExtraction";
 
-let map: Map<string, [string, number, number | null]> = new Map();
+export const map: Map<string, [string, number, number | null]> = new Map();
 let socketToTransaction: Map<net.Socket, MultiTransaction> = new Map();
-let write_command: Set<string> = new Set(["set", "incr"]);
-let read_command: Set<string> = new Set(["get"]);
 
 export class CommandProcessor {
 	private multiTransaction: MultiTransaction;
@@ -105,6 +104,7 @@ export class CommandProcessor {
 
 	public processCommand(command_sequence: RESPValue[]): string {
 		const command = command_sequence[0] as string;
+		console.log(command, command_sequence);
 
 		if (
 			this.multiTransaction.getTransactionFlag() &&
@@ -136,6 +136,20 @@ export class CommandProcessor {
 
 			case "incr":
 				return this.handleIncr(command_sequence);
+
+			case "config":
+				const configDir = rdbconfig[0];
+				const dbFilename = rdbconfig[1];
+
+				if (command_sequence[1] === "GET" && command_sequence[2] === "dir") {
+					return `*2\r\n$3\r\ndir\r\n$${configDir.length}\r\n${configDir}\r\n`;
+				} else if (
+					command_sequence[1] === "GET" &&
+					command_sequence[2] === "dbfilename"
+				) {
+					return `*2\r\n$10\r\ndbfilename\r\n$${dbFilename.length}\r\n${dbFilename}\r\n`;
+				}
+				return "-ERR unknown command\r\n";
 
 			case "multi":
 				this.multiTransaction.setTransactionFlag(true);
