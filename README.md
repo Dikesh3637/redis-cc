@@ -1,33 +1,45 @@
-[![progress-banner](https://backend.codecrafters.io/progress/redis/e00708e0-abdb-456b-8165-f1fdd8ab3bee)](https://app.codecrafters.io/users/codecrafters-bot?r=2qF)
+# Redis Clone in TypeScript
 
-This is a starting point for TypeScript solutions to the
-["Build Your Own Redis" Challenge](https://codecrafters.io/challenges/redis).
+## Overview
 
-In this challenge, you'll build a toy Redis clone that's capable of handling
-basic commands like `PING`, `SET` and `GET`. Along the way we'll learn about
-event loops, the Redis protocol and more.
+This repository contains my implementation of the ["Build Your Own Redis" Challenge](https://codecrafters.io/challenges/redis). The project, written in TypeScript, replicates essential Redis features such as event loops, the RESP protocol, and commands like `PING`, `SET`, and `GET`.
 
-**Note**: If you're viewing this repo on GitHub, head over to
-[codecrafters.io](https://codecrafters.io) to try the challenge.
+---
 
-# Passing the first stage
+## Completed Stages
 
-The entry point for your Redis implementation is in `app/main.ts`. Study and
-uncomment the relevant code, and push your changes to pass the first stage:
+### Core Features
 
-```sh
-git commit -am "pass 1st stage" # any msg
-git push origin master
-```
+- **Basic Commands**: Implemented `PING`, `SET`, `GET`, and `ECHO` commands.
+- **Client Management**: Supported multi-client connections.
+- **Key Expiry**: Added functionality for key expiration.
 
-That's all!
+### Transactions
 
-# Stage 2 & beyond
+- **Transactional Commands**: Implemented `INCR`, `MULTI`, `EXEC`, and `DISCARD`.
+- **Queue Management**: Supported command queuing and execution.
+- **Error Handling**: Managed transaction errors effectively.
 
-Note: This section is for stages 2 and beyond.
+---
 
-1. Ensure you have `bun (1.1)` installed locally
-1. Run `./your_program.sh` to run your Redis server, which is implemented in
-   `app/main.ts`.
-1. Commit your changes and run `git push origin master` to submit your solution
-   to CodeCrafters. Test output will be streamed to your terminal.
+## Getting Started
+
+### Prerequisites
+
+Ensure the following is installed:
+
+- [Bun](https://bun.sh/) (v1.1 or later)
+
+### Running the Server
+
+1. Clone the repository:
+   ```sh
+   git clone <repository-url>
+   cd <repository-directory>
+   ```
+2. Start the server:
+   ```sh
+   ./your_program.sh
+   ```
+
+The server logic resides in `app/main.ts`, and the code can be extended to include additional Redis commands.
